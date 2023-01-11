@@ -61,9 +61,6 @@ class Tvshow:
         if len(tvshow['title']) < 3:
             flash("Title must be at least 3 characters.", 'title')
             is_valid = False
-        if len(tvshow['network']) < 3:
-            flash("Network description be at least 3 characters.", 'network')
-            is_valid = False
         if len(tvshow['description']) < 3:
             flash("Description must be at least 3 characters.", 'description')
             is_valid = False

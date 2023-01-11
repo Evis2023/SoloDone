@@ -16,7 +16,7 @@
         </div>
     </nav>
     <h1 class="text-center my-4">Create Show</h1>
-    <form class="w-50 m-auto border border-1 p-5 bg-light" action="/create/show" method="post">
+    <form class="w-50 m-auto border border-1 p-5 bg-light" enctype="multipart/form-data" action="/create/show" method="post">
        <div class="row">
         <input type="hidden" name="user_id" value="{{loggedUser.id}}">
         <div class="col-lg-6">
@@ -34,8 +34,8 @@
                 {% endwith %}
                 </div>
             <div class="form-group">
-                <label for="description"> Network</label>
-                <input type="text" class="form-control" name="network">
+                <label for="network"> Show Image</label>
+                <input type="file" class="form-control" required name="network">
             </div>
             <div>
                 {% with messages = get_flashed_messages(category_filter=["network"]) %}

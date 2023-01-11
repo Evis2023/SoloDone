@@ -3,7 +3,22 @@ from flask import render_template, redirect, request, session
 from flask_app.models.user import User
 from flask_app.models.tvshow import Tvshow
 from flask import flash
+import os
+from contextlib import nullcontext
 
+from datetime import datetime
+# Photo upload Imports
+from werkzeug.utils import secure_filename
+from werkzeug.datastructures import  FileStorage
+
+UPLOAD_FOLDER = 'flask_app/static/img/IMAGE_UPLOADS'
+ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+
+def allowed_file(filename):
+    return '.' in filename and \
+        filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 @app.route('/create')
 def createForm():
@@ -19,10 +34,29 @@ def createForm():
 def createShow():
     if 'user_id' not in session:
         return redirect('/logout')
+
+    
+    if request.files['network'] == None:
+        image = ''
+    elif request.files['network'] != None:
+        image = request.files['network']
+
+    if image and allowed_file(image.filename):
+        filename = secure_filename(image.filename)
+        time = datetime.now().strftime("%d%m%Y%S%f")
+        time += filename
+        filename= time
+        image.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+    data = {
+        'title': request.form['title'],
+        'network': filename,
+        'release_date': request.form['release_date'],
+        'description': request.form['description'],
+        'user_id': session['user_id']
+    }
     if not Tvshow.validate_tvshows(request.form):
         return redirect(request.referrer)
-   
-    Tvshow.create_tvshow(request.form)
+    Tvshow.create_tvshow(data)
     return redirect('/')
 
 @app.route('/delete/<int:id>')
